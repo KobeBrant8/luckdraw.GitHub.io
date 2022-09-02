@@ -468,7 +468,7 @@
       //   return [0.1 * Math.random() + 0.01, -(0.1 * Math.random() + 0.01)]
       // }
       var getKey = function (item) {
-        return item.name + '-' + item.id
+        return item.name + '-' + item.six_id
       }
       var createHTML = function () {
         var html = ['<ul>']
@@ -509,7 +509,7 @@
           .map(function (m) {
             choosed[getKey(m)] = 1
             list[m.index].style.color = color
-            return m.name + '<br/>' + m.id
+            return m.name + '<br/>' + m.six_id
           })
         localStorage.setItem('choosed', JSON.stringify(choosed))
         return ret
