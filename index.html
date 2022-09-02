@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="screen-orientation" content="portrait" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+  <title>袁老师专属课堂点名系统</title>
+  <link rel="icon" href="./img/icon.ico" type="image/x-icon" />
+  <style>
+    @font-face {
+      font-family: 'DS-Digital';
+      src:
+        url(./lib/DS-Digital/DS-DIGI-1.ttf),
+        url(./lib/DS-Digital/DS-DIGIB-2.ttf),
+        url(./lib/DS-Digital/DS-DIGII-3.ttf),
+        url(./lib/DS-Digital/DS-DIGIT-4.ttf);
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      cursor: url('./img/Link.cur'), auto;
+      user-select: none
+    }
+
+    .import-view {
+      margin-top: 30px;
+    }
+
+    #localtime {
+      font-size: 94px;
+      color: #fff;
+      font-family: DS-Digital;
+      font-weight: 500
+    }
+
+    #localtime1 {
+      text-align: center;
+      font-size: 20px;
+    }
+
+    #content {
+      position: absolute;
+      top: 0%;
+    }
+
+    ul {
+      list-style: none;
+      font-size: 16px;
+      font-family: "KaiTi";
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .contextmenu {
+      width: 120px;
+      border: 1px solid #000;
+      background-color: #000;
+      opacity: 0.7;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: none;
+      border-radius: 10px;
+    }
+
+    .contextmenu li {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .contextmenu li a {
+      display: block;
+      padding-left: 20px;
+      box-sizing: border-box;
+    }
+
+    .contextmenu li a:hover {
+      font-weight: bold;
+      color: lime;
+
+    }
+
+    .contextmenu ul li:nth-child(n+3) a {
+      font-weight: bold;
+      color: red
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 3D云层效果 -->
+  <script type="text/javascript" src="./lib/clouds/ThreeWebGL.js"></script>
+  <script type="text/javascript" src="./lib/clouds/ThreeExtras.js"></script>
+  <script type="text/javascript" src="./lib/clouds/Detector.js"></script>
+  <script type="text/javascript" src="./lib/clouds/RequestAnimationFrame.js"></script>
+  <script id="vs" type="x-shader/x-vertex">
+    varying vec2 vUv;
+      void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      }
+    </script>
+  <script id="fs" type="x-shader/x-fragment">
+    uniform sampler2D map;
+      uniform vec3 fogColor;
+      uniform float fogNear;
+      uniform float fogFar;
+      varying vec2 vUv;
+      void main() {
+        float depth = gl_FragCoord.z / gl_FragCoord.w;
+        float fogFactor = smoothstep( fogNear, fogFar, depth );
+        gl_FragColor = texture2D( map, vUv );
+        gl_FragColor.w *= pow( gl_FragCoord.z, 20.0 );
+        gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
+      }
+    </script>
+  <script src="./lib/clouds/Clouds.js"></script>
+  <script src="./lib/vue.min.js"></script>
+  <script type="text/javascript" src="./js/values.js"></script>
+  <script src="./lib/ant-design-vue/dist/antd.js"></script>
+  <!-- <link href="./lib/ant-design-vue/dist/antd.css" rel="stylesheet" /> -->
+  <!-- Vue 渲染组件 -->
+  <div id="app"></div>
+
+  <!-- Vue UI -->
+  <script src="./js/index.js"></script>
+  <link rel="stylesheet" href="./css/index.css" />
+  <script>
+    document.oncontextmenu = function (env) {
+      //env 表示event事件
+      // 兼容event事件写法
+      var e = env || window.event;
+      // 获取菜单，让菜单显示出来
+      var context = document.getElementById("context");
+      context.style.display = "block";
+      //  让菜单随着鼠标的移动而移动
+      //  获取鼠标的坐标
+      var x = e.clientX;
+      var y = e.clientY;
+      //  获取窗口的宽度和高度
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      //  调整宽度和高度
+      context.style.left = Math.min(w - 202, x) + "px";
+      context.style.top = Math.min(h - 230, y) + "px";
+      // return false可以关闭系统默认菜单
+      return false;
+    };
+    //   当鼠标点击后关闭右键菜单
+    document.onclick = function () {
+      var contextmenu = document.getElementById("context");
+      contextmenu.style.display = "none";
+    };
+
+    function showLocale(objD) {
+      var str, colorhead, colorfoot;
+      var yy = objD.getYear();
+      if (yy < 1900) yy = yy + 1900;
+      var MM = objD.getMonth() + 1;
+      if (MM < 10) MM = '0' + MM;
+      var dd = objD.getDate();
+      if (dd < 10) dd = '0' + dd;
+      var hh = objD.getHours();
+      if (hh < 10) hh = '0' + hh;
+      var mm = objD.getMinutes();
+      if (mm < 10) mm = '0' + mm;
+      var ss = objD.getSeconds();
+      if (ss < 10) ss = '0' + ss;
+      var ww = objD.getDay();
+      if (ww == 0) colorhead = "<font color=\"#fff\">";
+      if (ww > 0 && ww < 6) colorhead = "<font color=\"#fff\">";
+      if (ww == 6) colorhead = "<font color=\"#fff\">";
+      if (ww == 0) ww = "星期日";
+      if (ww == 1) ww = "星期一";
+      if (ww == 2) ww = "星期二";
+      if (ww == 3) ww = "星期三";
+      if (ww == 4) ww = "星期四";
+      if (ww == 5) ww = "星期五";
+      if (ww == 6) ww = "星期六";
+      colorfoot = "</font>"
+      str = colorhead + hh + ":" + mm + ":" + ss + "  ";
+      return (str);
+    }
+
+    function showLocale1(objD) {
+      var str, colorhead, colorfoot;
+      var yy = objD.getYear();
+      if (yy < 1900) yy = yy + 1900;
+      var MM = objD.getMonth() + 1;
+      if (MM < 10) MM = '0' + MM;
+      var dd = objD.getDate();
+      if (dd < 10) dd = '0' + dd;
+      var hh = objD.getHours();
+      if (hh < 10) hh = '0' + hh;
+      var mm = objD.getMinutes();
+      if (mm < 10) mm = '0' + mm;
+      var ss = objD.getSeconds();
+      if (ss < 10) ss = '0' + ss;
+      var ww = objD.getDay();
+      if (ww == 0) colorhead = "<font color=\"#fff\">";
+      if (ww > 0 && ww < 6) colorhead = "<font color=\"#fff\">";
+      if (ww == 6) colorhead = "<font color=\"#fff\">";
+      if (ww == 0) ww = "星期日";
+      if (ww == 1) ww = "星期一";
+      if (ww == 2) ww = "星期二";
+      if (ww == 3) ww = "星期三";
+      if (ww == 4) ww = "星期四";
+      if (ww == 5) ww = "星期五";
+      if (ww == 6) ww = "星期六";
+      colorfoot = "</font>"
+      str = colorhead + yy + "年" + MM + "月" + dd + "日" + "&nbsp&nbsp&nbsp" + ww + colorfoot;
+      return (str);
+    }
+
+    function tick() {
+      var today;
+      today = new Date();
+      document.getElementById("localtime").innerHTML = showLocale(today);
+      window.setTimeout("tick()", 1000);
+    }
+    tick();
+
+    function tick1() {
+      var today;
+      today = new Date();
+      document.getElementById("localtime1").innerHTML = showLocale1(today);
+      window.setTimeout("tick()", 1000);
+    }
+    tick1();
+  </script>
+</body>
+
+</html>

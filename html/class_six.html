@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="screen-orientation" content="portrait" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+  <title>六班名册</title>
+  <link rel="stylesheet" type="text/css" href="../css/reset.css" />
+  <link rel="stylesheet" type="text/css" href="../css/wall.css" />
+  <link rel="icon" href="../img/icon.ico" type="image/x-icon" />
+  <style type="text/css">
+    body,
+    html {
+      width: 100%;
+      height: 100%;
+      cursor: url('../img/arrow.cur'), auto;
+      user-select: none
+    }
+
+    .result {
+      position: absolute;
+      height: 320px;
+      width: 100%;
+      left: 0;
+      top: 50%;
+      margin-top: -160px;
+      text-align: center;
+      padding: 10px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .result span {
+      display: inline-block;
+      font-size: 25px;
+      width: 180px;
+      background: #fff;
+      line-height: 30px;
+      color: #000;
+      margin: 5px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+      padding: 10px 0;
+      font-family: '\9ED1\4F53';
+      color: #666;
+      background: -webkit-linear-gradient(45deg,
+          #f22,
+          #f2f,
+          #22f,
+          #2ff,
+          #ff2);
+      -moz-linear-gradient: (45deg, #f22, #f2f, #22f, #2ff, #ff2);
+      -ms-linear-gradient: (45deg, #f22, #f2f, #22f, #2ff, #ff2);
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-transition: all 3.5s;
+      transition: all 3.5s;
+      -webkit-animation: ran 66s linear infinite;
+      animation: ran 66s linear infinite;
+    }
+
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      color: inherit;
+      font: inherit;
+      margin: 0;
+      border: none;
+    }
+
+    button {
+      overflow: visible;
+    }
+
+    button,
+    select {
+      text-transform: none;
+    }
+
+    button,
+    html input[type='button'],
+    input[type='reset'],
+    input[type='submit'] {
+      -webkit-appearance: button;
+      cursor: pointer;
+    }
+
+    .pure-button {
+      display: inline-block;
+      zoom: 1;
+      line-height: normal;
+      white-space: nowrap;
+      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
+      -webkit-user-drag: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    .pure-button {
+      font-family: inherit;
+      font-size: 100%;
+      padding: 0.5em 1em;
+      color: #444;
+      color: rgba(0, 0, 0, 0.8);
+      border: 0 rgba(0, 0, 0, 0);
+      background-color: #e6e6e6;
+      text-decoration: none;
+      border-radius: 2px;
+    }
+
+    .pure-button:focus {
+      outline: 0;
+    }
+
+    .pure-button-hover,
+    .pure-button:hover,
+    .pure-button:focus {
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#1a000000', GradientType=0);
+      background-image: -webkit-gradient(linear,
+          0 0,
+          0 100%,
+          from(transparent),
+          color-stop(40%, rgba(0, 0, 0, 0.05)),
+          to(rgba(0, 0, 0, 0.1)));
+      background-image: -webkit-linear-gradient(transparent,
+          rgba(0, 0, 0, 0.05) 40%,
+          rgba(0, 0, 0, 0.1));
+      background-image: -moz-linear-gradient(top,
+          rgba(0, 0, 0, 0.05) 0,
+          rgba(0, 0, 0, 0.1));
+      background-image: -o-linear-gradient(transparent,
+          rgba(0, 0, 0, 0.05) 40%,
+          rgba(0, 0, 0, 0.1));
+      background-image: linear-gradient(transparent,
+          rgba(0, 0, 0, 0.05) 40%,
+          rgba(0, 0, 0, 0.1));
+      cursor: url('./img/arr.cur'), auto;
+    }
+
+    .button-success,
+    .button-error,
+    .button-warning,
+    .button-secondary {
+      color: white;
+      border-radius: 4px;
+
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-success {
+      background: rgb(28, 184, 65);
+    }
+
+    .button-error {
+      background: rgb(202, 60, 60);
+    }
+
+    .button-warning {
+      background: rgb(223, 117, 20);
+    }
+
+    .button-secondary {
+      background: rgb(66, 184, 221);
+    }
+
+    .tools {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      text-align: center;
+    }
+
+    .tools .pure-button {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px 0;
+      text-align: center;
+      width: 50px;
+    }
+
+    .mask {
+      -webkit-filter: blur(5px);
+      filter: blur(5px);
+    }
+
+    #main {
+      -webkit-transition: all 1s;
+      transition: all 1s;
+      position: relative;
+    }
+
+    .result-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      /* margin-top: 20px; */
+      /* text-align: right;
+      margin-right: 30px;
+      text-decoration: none;
+      color: white; */
+    }
+
+    .title_left {
+      position: absolute;
+      top: 20px;
+      left: 5%;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 8px;
+    }
+
+    .title_right {
+      position: absolute;
+      top: 20px;
+      right: 5%;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 8px;
+    }
+
+    .colourText {
+      font-family: '幼圆';
+      color: #666;
+      background: -webkit-linear-gradient(45deg,
+          #f22,
+          #f2f,
+          #22f,
+          #2ff,
+          #ff2);
+      -moz-linear-gradient: (45deg, #f22, #f2f, #22f, #2ff, #ff2);
+      -ms-linear-gradient: (45deg, #f22, #f2f, #22f, #2ff, #ff2);
+      color: transparent;
+      /*设置字体颜色透明*/
+      -webkit-background-clip: text;
+      background-clip: text;
+      /*背景裁剪为文本形式*/
+      transition: all 3.5s;
+      /*66*/
+      animation: ran 20s linear infinite;
+      /*动态10s展示*/
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    @keyframes ran {
+      from {
+        backgroud-position: 0 0;
+      }
+
+      to {
+        background-position: 2000px 0;
+      }
+    }
+
+    .map1 {
+      width: 630px;
+      height: 630px;
+      position: absolute;
+      animation: rotate1 10s linear infinite;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url(../img/map.png) no-repeat center;
+      background-size: 100% 100%;
+      opacity: 0.2;
+      z-index: 2;
+    }
+
+    .map2 {
+      width: 550px;
+      height: 550px;
+      position: absolute;
+      animation: rotate1 12s linear infinite;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url(../img/jt.png) no-repeat center;
+      background-size: 100% 100%;
+      opacity: 0.9;
+      z-index: 2;
+    }
+
+    .map3 {
+      width: 600px;
+      height: 600px;
+      position: absolute;
+      opacity: 0.7;
+      animation: rotate 15s linear infinite;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url(../img/lbx.png) no-repeat center;
+      background-size: 100% 100%;
+      z-index: 2;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    @keyframes rotate1 {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      to {
+        transform: translate(-50%, -50%) rotate(-360deg);
+      }
+    }
+
+    @media screen and (max-width: 1024px) {
+      html {
+        font-size: 42px !important;
+      }
+    }
+
+    @media screen and (min-width: 1920) {
+      html {
+        font-size: 80px !important;
+      }
+    }
+
+    .btn {
+      flex: 1 1 auto;
+      margin: 10px;
+      padding: 30px;
+      text-align: center;
+      text-transform: uppercase;
+      transition: 0.5s;
+      background-size: 200% auto;
+      color: white;
+      box-shadow: 0 0 20px #eee;
+      border-radius: 10px;
+    }
+
+    .btn:hover {
+      background-position: right center;
+    }
+
+    .btn-1 {
+      background-image: linear-gradient(to right, #f6d365 0%, #fda085 51%, #f6d365 100%);
+    }
+
+    .btn-2 {
+      background-image: linear-gradient(to right, #fbc2eb 0%, #a6c1ee 51%, #fbc2eb 100%);
+    }
+
+    .btn-3 {
+      background-image: linear-gradient(to right, #84fab0 0%, #8fd3f4 51%, #84fab0 100%);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main" class="wall">
+    <canvas class="fireworks" style="
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999999;
+          pointer-events: none;
+        "></canvas>
+    <div class="map1"></div>
+    <div class="map2"></div>
+    <div class="map3"></div>
+    <!-- <div class="result-btn">
+      <a class="colourText" href="./result.html" target="_blank">中奖名单</a>
+    </div> -->
+    <div class="title_left">
+      <a class="colourText" target="_blank">崇德博学</a>
+    </div>
+    <div class="title_right">
+      <a class="colourText" target="_blank">求实创新</a>
+    </div>
+  </div>
+  <div id="result" class="result"></div>
+  <div id="tools" class="tools">
+    <button v-for="value in btns" @click="onClick(value)" class="pure-button btn btn-2"
+      :class="{ 'button-error': selected == value}">
+      {{value}}
+    </button>
+    <button class="pure-button btn btn-1" @click="toggle" :class="{'button-secondary': !running,
+               'button-success': running}">
+      {{running?'停!':'开始'}}
+    </button>
+    <button class="pure-button button-warning btn btn-3" @click="reset">重置</button>
+  </div>
+  <script type="text/javascript" src="../js/zepto.js"></script>
+  <script type="text/javascript" src="../js/vue.js"></script>
+  <script type="text/javascript" src="../js/tagcanvas.js"></script>
+  <script type="text/javascript" src="../js/member.js"></script>
+  <script type="text/javascript" src="../js/love.js"></script>
+  <script type="text/javascript" src="../js/fireworks.js"></script>
+  <script src="../js/L2Dwidget.min.js"></script>
+  <script type="text/javascript">
+    document.oncontextmenu = function (event) {
+      if (window.event) {
+        event = window.event;
+      }
+      try {
+        var the = event.srcElement;
+        if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")) {
+          return false;
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    document.onkeydown = function () {
+      if (window.event && window.event.keyCode == 123) {
+        event.keyCode = 0;
+        event.returnValue = false;
+      }
+      if (window.event && window.event.keyCode == 13) {
+        window.event.keyCode = 505;
+      }
+      if (window.event && window.event.keyCode == 8) {
+        window.event.returnValue = false;
+      }
+    }
+    L2Dwidget.on('*', (name) => {
+      console.log(
+        '%c EVENT ' + '%c -> ' + name,
+        'background: #222; color: yellow',
+        'background: #fff; color: #000'
+      )
+    }).init({
+      display: {
+        position: 'left',
+        hOffset: 30,
+      },
+      dialog: {
+        // 开启对话框
+        enable: true,
+        script: {
+          // 每空闲 10 秒钟，显示一条一言
+          'every idle 8s': '$hitokoto$',
+          // 当触摸到角色身体
+          'tap body': '哎呀！别碰我！',
+          // 当触摸到角色头部
+          'tap face': '人家已经不是小孩子了！',
+        },
+      },
+    });
+    (function () {
+      var choosed = JSON.parse(localStorage.getItem('choosed')) || {}
+      console.log(choosed)
+      // var speed = function () {
+      //   return [0.1 * Math.random() + 0.01, -(0.1 * Math.random() + 0.01)]
+      // }
+      var getKey = function (item) {
+        return item.name + '-' + item.id
+      }
+      var createHTML = function () {
+        var html = ['<ul>']
+        six_list.forEach(function (item, index) {
+          item.index = index
+          var key = getKey(item)
+          var color = choosed[key] ? 'yellow' : 'white'
+          html.push(
+            '<li><a href="#" style="color: ' +
+            color +
+            '">' +
+            item.name +
+            '</a></li>'
+          )
+        })
+        html.push('</ul>')
+        return html.join('')
+      }
+      var lottery = function (count) {
+        var list = canvas.getElementsByTagName('a')
+        var color = 'yellow'
+        var ret = six_list
+          .filter(function (m, index) {
+            m.index = index
+            return !choosed[getKey(m)]
+          })
+          .map(function (m) {
+            return Object.assign({
+                score: Math.random(),
+              },
+              m
+            )
+          })
+          .sort(function (a, b) {
+            return a.score - b.score
+          })
+          .slice(0, count)
+          .map(function (m) {
+            choosed[getKey(m)] = 1
+            list[m.index].style.color = color
+            return m.name + '<br/>' + m.id
+          })
+        localStorage.setItem('choosed', JSON.stringify(choosed))
+        return ret
+      }
+      var canvas = document.createElement('canvas')
+      canvas.id = 'myCanvas'
+      canvas.width = document.body.offsetWidth
+      canvas.height = document.body.offsetHeight
+      document.getElementById('main').appendChild(canvas)
+      new Vue({
+        el: '#tools',
+        data: {
+          selected: 1,
+          running: false,
+          btns: [3, 2, 1],
+        },
+        mounted() {
+          canvas.innerHTML = createHTML()
+          TagCanvas.Start('myCanvas', '', {
+            textColour: null,
+            dragControl: 1,
+            decel: 0.95,
+            interval: 20,
+            textHeight: 25,
+            minSpeed: 0.01,
+            noSelect: true,
+            lock: 'xy',
+            initial: [0.1, 0.1],
+          })
+        },
+        methods: {
+          reset: function () {
+            if (confirm('确定要重置么？所有之前的点名历史将被清除！')) {
+              localStorage.clear()
+              location.reload(true)
+            }
+          },
+          onClick: function (num) {
+            $('#result').css('display', 'none')
+            $('#main').removeClass('mask')
+            this.selected = num
+          },
+          toggle: function () {
+            if (this.running) {
+              TagCanvas.SetSpeed('myCanvas', [0.1, 0.1])
+              var ret = lottery(this.selected)
+              if (ret.length === 0) {
+                $('#result')
+                  .css('display', 'block')
+                  .html('<span>已抽完</span>')
+                return
+              }
+              $('#result')
+                .css('display', 'block')
+                .html(
+                  '<span style="border-color:red">' +
+                  ret.join('</span><span>') +
+                  '</span>'
+                )
+              //  TagCanvas.Reload('myCanvas')
+              setTimeout(function () {
+                localStorage.setItem(
+                  new Date().toString(),
+                  JSON.stringify(ret)
+                )
+                $('#main').addClass('mask')
+              }, 300)
+            } else {
+              $('#result').css('display', 'none')
+              $('#main').removeClass('mask')
+              TagCanvas.SetSpeed('myCanvas', [4, 4])
+            }
+            this.running = !this.running
+          },
+        },
+      })
+    })()
+  </script>
+</body>
+
+</html>
