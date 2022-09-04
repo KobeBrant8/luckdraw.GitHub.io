@@ -120,7 +120,7 @@ var seven_list = [{
   },
   {
     "six_id": "No.31",
-    "name": "陈品榕"
+    "name": "刘泽旻"
   },
   {
     "six_id": "No.32",
