@@ -50,7 +50,6 @@ new Vue({
       </div>
       <div class="contextmenu" id="context">
         <ul>
-          <li @click="go_six"><a><a-icon type="crown"/> 六班</a></li>
           <li @click="go_seven"><a><a-icon type="trophy"/> 七班</a></li>
           <li @click="ClosePage"><a><a-icon type="logout"/> 关闭</a></li>
         </ul>
